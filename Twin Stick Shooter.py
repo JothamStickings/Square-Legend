@@ -12,26 +12,52 @@ except:
     pass
 
 
-def getname(score):
+def display_instructions():
+    instructions = GraphWin("Menu", 400, 500)
+    instructions.setBackground("white")
+    txt1 = Text(Point(200, 50), "Movement: WASD or Arrow Keys")
+    txt1.setFill("black")
+    txt1.setSize(12)
+    txt1.draw(instructions)
+
+    txt2 = Text(Point(200, 100), "Shoot: Hold Left Mouse Button")
+    txt2.setFill("black")
+    txt2.draw(instructions)
+
+    txt3 = Text(Point(200, 150), "Jump: Middle Mouse Button or Space")
+    txt3.setFill("black")
+    txt3.draw(instructions)
+
+    txt4 = Text(Point(200, 200), "Grenade: Right Mouse Button")
+    txt4.setFill("black")
+    txt4.draw(instructions)
+    try:
+        instructions.getMouse()
+    except GraphicsError:
+        pass
+    instructions.close()
+
+
+def get_name(score):
     box = GraphWin("Name", 200, 100)
     box.setBackground("black")
-    namebox = Entry(Point(100, 50), 15)
+    name_box = Entry(Point(100, 50), 15)
     txt = Text(Point(40, 10), "Type Name:")
     txt.setFill("white")
     enter = Text(Point(150, 80), "Enter")
     enter.setFill("green")
     enter.draw(box)
-    scoretxt = "Final Score:" + str(score)
-    finscore = Text(Point(50, 80), scoretxt)
-    finscore.setFill("white")
-    finscore.draw(box)
-    namebox.draw(box)
+    score_txt = "Final Score:" + str(score)
+    final_score = Text(Point(50, 80), score_txt)
+    final_score.setFill("white")
+    final_score.draw(box)
+    name_box.draw(box)
     txt.draw(box)
     try:
         box.getMouse()
-    except:
+    except GraphicsError:
         pass
-    name = namebox.getText()
+    name = name_box.getText()
     box.close()
     return name
 
@@ -298,7 +324,7 @@ def playgame():
     item_list = []
     enemy_list = []
     grenade_list = []
-    enemy = Enemy("warrior")
+    enemy = Enemy()
     enemy_list.append(enemy)
     score = 0
     speed = 4
@@ -647,7 +673,7 @@ def playgame():
         # quits pygame
     pygame.quit()
 
-    name = getname(score)
+    name = get_name(score)
     if name != "":
         highscores.EnterScore(name, score)
 
@@ -667,6 +693,9 @@ if __name__ == "__main__":
     close.draw(menu)
     hs = Text(Point(200, 400), "High Scores")
     hs.setFill("black")
+    inst = Text(Point(200, 450), "Controls")
+    inst.setFill("black")
+    inst.draw(menu)
     hs.draw(menu)
 
     while True:
@@ -684,5 +713,7 @@ if __name__ == "__main__":
             break
         elif 390 <= y <= 410 and 160 <= x <= 240:
             highscores.DisplayTable()
+        elif 440 <= y <= 460 and 165 <= x <= 235:
+            display_instructions()
 
     menu.close()
