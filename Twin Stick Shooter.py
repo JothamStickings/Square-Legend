@@ -31,6 +31,10 @@ def display_instructions():
     txt4 = Text(Point(200, 200), "Grenade: Right Mouse Button")
     txt4.setFill("black")
     txt4.draw(instructions)
+
+    txt5 = Text(Point(200, 250), "+: Upgrades")
+    txt5.setFill("black")
+    txt5.draw(instructions)
     try:
         instructions.getMouse()
     except GraphicsError:
