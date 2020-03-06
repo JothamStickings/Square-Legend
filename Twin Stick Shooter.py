@@ -31,6 +31,11 @@ def display_instructions():
     txt4 = Text(Point(200, 200), "Grenade: Right Mouse Button")
     txt4.setFill("black")
     txt4.draw(instructions)
+
+    txt5 = Text(Point(200, 450), "Music: https://www.bensound.com")
+    txt5.setFill("black")
+    txt5.draw(instructions)
+
     try:
         instructions.getMouse()
     except GraphicsError:
@@ -64,7 +69,7 @@ def get_name(score):
 
 # initialise pygame
 pygame.init()
-pygame.mixer.init()
+pygame.mixer.pre_init(44100, 16, 2, 4096) #frequency, size, channels, buffersize
 
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 600
@@ -316,6 +321,9 @@ def playgame():
 
     clock = pygame.time.Clock()
 
+    # sounds
+    # shot = pygame.mixer.Sound("shot.wav")
+
     # Sets up the game loop that runs a frame of the game until done is True
     done = False
     player = Player()
@@ -340,11 +348,16 @@ def playgame():
 
     pygame.mouse.set_cursor(*pygame.cursors.broken_x)
 
+    pygame.mixer.music.load('music.mp3')
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.5)
+
     while not done:
         screen.fill(white)
         mouse = pygame.mouse.get_pressed()
 
         if mouse[0] and reload <= 0:
+            # shot.play()
             reload = default_reload_speed
             pos = pygame.mouse.get_pos()
             vx = pos[0] - player.x
