@@ -36,6 +36,10 @@ def display_instructions():
     txt5.setFill("black")
     txt5.draw(instructions)
 
+    txt6 = Text(Point(200, 475), "Sound: SwissArcadeGameEntertainment")
+    txt6.setFill("black")
+    txt6.draw(instructions)
+
     try:
         instructions.getMouse()
     except GraphicsError:
@@ -322,7 +326,17 @@ def playgame():
     clock = pygame.time.Clock()
 
     # sounds
-    # shot = pygame.mixer.Sound("shot.wav")
+    shot = pygame.mixer.Sound("sounds/Effects/Bass Drum/Wav/Bass Drum__001.wav")
+    shot.set_volume(0.5)
+    exp = pygame.mixer.Sound("sounds/Effects/Explosion2/Wav/Explosion2__008.wav")
+    pickup = pygame.mixer.Sound("sounds/Effects/Pickup/Wav/Pickup__003.wav")
+    pickup.set_volume(2)
+    tel = pygame.mixer.Sound("sounds/Effects/Pew/Wav/Pew__008.wav")
+    tel.set_volume(0.5)
+    tel_enemy = pygame.mixer.Sound("sounds/Effects/Pew/Wav/Pew__008.wav")
+    tel_enemy.set_volume(0.3)
+    power =pygame.mixer.Sound("sounds/Effects/Powerup/Wav/Powerup__008.wav")
+    power.set_volume(0.5)
 
     # Sets up the game loop that runs a frame of the game until done is True
     done = False
@@ -348,7 +362,7 @@ def playgame():
 
     pygame.mouse.set_cursor(*pygame.cursors.broken_x)
 
-    pygame.mixer.music.load('music.mp3')
+    pygame.mixer.music.load('sounds/Music/music.mp3')
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(0.5)
 
@@ -356,14 +370,21 @@ def playgame():
         screen.fill(white)
         mouse = pygame.mouse.get_pressed()
 
-        if mouse[0] and reload <= 0:
-            # shot.play()
-            reload = default_reload_speed
-            pos = pygame.mouse.get_pos()
-            vx = pos[0] - player.x
-            vy = pos[1] - player.y
-            bullet = Bullet((vx, vy), player.x, player.y, speed, damage)
-            bullet_list.append(bullet)
+        played_shot = False
+
+        if mouse[0]:
+            if reload == 10:
+                shot.play()
+                played_shot = True
+            if reload <= 0:
+                if not played_shot:
+                    shot.play()
+                reload = default_reload_speed
+                pos = pygame.mouse.get_pos()
+                vx = pos[0] - player.x
+                vy = pos[1] - player.y
+                bullet = Bullet((vx, vy), player.x, player.y, speed, damage)
+                bullet_list.append(bullet)
 
         keys = pygame.key.get_pressed()
         if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and player.x > 5:
@@ -387,10 +408,8 @@ def playgame():
             if event.type == pygame.QUIT:
                 done = True
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
-                    bullet = Bullet((1, 1), player.x, player.y, 0, damage)
-                    bullet_list.append(bullet)
                 if (event.key == pygame.K_RCTRL or event.key == pygame.K_SPACE or event.key == pygame.K_SLASH) and charges > 0:
+                    tel.play()
                     pygame.draw.rect(screen, red, (player.x - 6, player.y - 6, 12, 12))
                     player.x += change_x*50
                     player.y += change_y*50
@@ -405,6 +424,7 @@ def playgame():
                     pygame.draw.rect(screen, red, (player.x - 7, player.y - 7, 14, 14))
                     charges -= 1
             if pygame.mouse.get_pressed()[1] and event.type == pygame.MOUSEBUTTONDOWN and charges > 0:
+                tel.play()
                 pygame.draw.rect(screen, red, (player.x - 6, player.y - 6, 12, 12))
                 player.x += change_x * 50
                 player.y += change_y * 50
@@ -483,8 +503,10 @@ def playgame():
                 pygame.draw.rect(screen, blue, (item.x - 1, item.y - 3, 2, 6))
             if touching(player, item, 7, 7):
                 if item.type == 0:
+                    pickup.play()
                     player.hp += 1
                 elif item.type == 1:
+                    power.play()
                     item_choice = randint(0, 2)
                     if item_choice == 0 and speed <= 10:
                         speed += 1
@@ -497,6 +519,7 @@ def playgame():
                         f = Enemy("friend", player.x + 2, player.y + 4)
                         enemy_list.append(f)
                 elif item.type == 2:
+                    power.play()
                     max_charges += 1
                     charges = max_charges
                 item_list = item.delete(item_list)
@@ -534,6 +557,7 @@ def playgame():
                 dx = player.x - enemy.x
                 distance = math.sqrt(dx ** 2 + dy ** 2)
                 if randint(0, 375) <= 1 and distance > 25:
+                    tel_enemy.play()
                     pygame.draw.rect(screen, red, (enemy.x - 5, enemy.y - 5, 10, 10))
                     enemy.x += dx * 1.4
                     enemy.y += dy * 1.4
@@ -661,6 +685,8 @@ def playgame():
                 pygame.draw.rect(screen, white, (grenade.x - 2, grenade.y - 2, 4, 4))
             life = grenade.move()
             grenade_list = check_on_screen(grenade, grenade_list)
+            if life == 10:
+                exp.play()
             if life <= 3:
                 pygame.draw.rect(screen, black, (grenade.x - 15, grenade.y - 15, 30, 30))
             if life == 0:
