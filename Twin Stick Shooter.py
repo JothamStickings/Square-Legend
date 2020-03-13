@@ -78,6 +78,12 @@ pygame.mixer.pre_init(44100, 16, 2, 4096) #frequency, size, channels, buffersize
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 600
 
+black = (0, 0, 0)
+white = (255, 255, 255)
+red = (255, 0, 0)
+green = (0, 255, 0)
+blue = (0, 0, 255)
+
 
 class Player:
     def __init__(self):
@@ -307,16 +313,28 @@ def check_on_screen(bullet, bullet_list):
     return bullet_list
 
 
+def teleport_player(tel, player, screen, change_x, change_y, charges):
+    tel.play()
+    pygame.draw.rect(screen, red, (player.x - 6, player.y - 6, 12, 12))
+    player.x += change_x*50
+    player.y += change_y*50
+    if player.y > SCREEN_HEIGHT-5:
+        player.y = SCREEN_HEIGHT-5
+    if player.y < 5:
+        player.y = 5
+    if player.x > SCREEN_WIDTH-5:
+        player.x = SCREEN_WIDTH-5
+    if player.x < 5:
+        player.x = 5
+    pygame.draw.rect(screen, red, (player.x - 7, player.y - 7, 14, 14))
+    return charges-1
+
+
 def play_game():
     # useful definitions
     SCREEN_WIDTH = 1000
     SCREEN_HEIGHT = 600
     size = [SCREEN_WIDTH, SCREEN_HEIGHT]
-    black = (0, 0, 0)
-    white = (255, 255, 255)
-    red = (255, 0, 0)
-    green = (0, 255, 0)
-    blue = (0, 0, 255)
 
     # Screen setting up
     screen = pygame.display.set_mode(size)
@@ -411,35 +429,9 @@ def play_game():
                 done = True
             if event.type == pygame.KEYDOWN:
                 if (event.key == pygame.K_RCTRL or event.key == pygame.K_SPACE or event.key == pygame.K_SLASH) and charges > 0:
-                    tel.play()
-                    pygame.draw.rect(screen, red, (player.x - 6, player.y - 6, 12, 12))
-                    player.x += change_x*50
-                    player.y += change_y*50
-                    if player.y > SCREEN_HEIGHT-5:
-                        player.y = SCREEN_HEIGHT-5
-                    if player.y < 5:
-                        player.y = 5
-                    if player.x > SCREEN_WIDTH-5:
-                        player.x = SCREEN_WIDTH-5
-                    if player.x < 5:
-                        player.x = 5
-                    pygame.draw.rect(screen, red, (player.x - 7, player.y - 7, 14, 14))
-                    charges -= 1
+                    charges = teleport_player(tel, player, screen, change_x, change_y, charges)
             if pygame.mouse.get_pressed()[1] and event.type == pygame.MOUSEBUTTONDOWN and charges > 0:
-                tel.play()
-                pygame.draw.rect(screen, red, (player.x - 6, player.y - 6, 12, 12))
-                player.x += change_x * 50
-                player.y += change_y * 50
-                if player.y > SCREEN_HEIGHT - 5:
-                    player.y = SCREEN_HEIGHT - 5
-                if player.y < 5:
-                    player.y = 5
-                if player.x > SCREEN_WIDTH - 5:
-                    player.x = SCREEN_WIDTH - 5
-                if player.x < 5:
-                    player.x = 5
-                pygame.draw.rect(screen, red, (player.x - 7, player.y - 7, 14, 14))
-                charges -= 1
+                charges = teleport_player(tel, player, screen, change_x, change_y, charges)
             if pygame.mouse.get_pressed()[2] and event.type == pygame.MOUSEBUTTONDOWN and grenade_reload <= 0:
                 grenade_reload = 5
                 pos = pygame.mouse.get_pos()
