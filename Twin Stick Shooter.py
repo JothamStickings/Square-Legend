@@ -307,7 +307,7 @@ def check_on_screen(bullet, bullet_list):
     return bullet_list
 
 
-def playgame():
+def play_game():
     # useful definitions
     SCREEN_WIDTH = 1000
     SCREEN_HEIGHT = 600
@@ -325,6 +325,8 @@ def playgame():
 
     clock = pygame.time.Clock()
 
+    pygame.mixer.init()
+
     # sounds
     shot = pygame.mixer.Sound("sounds/Effects/Bass Drum/Wav/Bass Drum__001.wav")
     shot.set_volume(0.5)
@@ -335,7 +337,7 @@ def playgame():
     tel.set_volume(0.5)
     tel_enemy = pygame.mixer.Sound("sounds/Effects/Pew/Wav/Pew__008.wav")
     tel_enemy.set_volume(0.3)
-    power =pygame.mixer.Sound("sounds/Effects/Powerup/Wav/Powerup__008.wav")
+    power = pygame.mixer.Sound("sounds/Effects/Powerup/Wav/Powerup__008.wav")
     power.set_volume(0.5)
 
     # Sets up the game loop that runs a frame of the game until done is True
@@ -747,7 +749,7 @@ if __name__ == "__main__":
         x = click.getX()
 
         if 290 <= y <= 310 and 183 <= x <= 218:
-            playgame()
+            play_game()
         elif 340 <= y <= 360 and 183 <= x <= 218:
             break
         elif 390 <= y <= 410 and 160 <= x <= 240:
