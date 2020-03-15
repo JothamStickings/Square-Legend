@@ -253,7 +253,7 @@ class Bullet:
 
 
 class Grenade:
-    def __init__(self, vector, px, py, life=120):
+    def __init__(self, vector, px, py, life=100):
         self.vector = vector
         self.x = px
         self.y = py
@@ -265,7 +265,7 @@ class Grenade:
         vector = self.vector
         distance = math.sqrt(vector[0] ** 2 + vector[1] ** 2)
         multiplier = self.speed / distance
-        self.speed *= 0.97
+        self.speed *= 0.94
         self.life -= 1
         self.x += vector[0] * multiplier
         self.y += vector[1] * multiplier
@@ -408,22 +408,23 @@ def play_game():
 
         keys = pygame.key.get_pressed()
         if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and player.x > 5:
-            player.x -= 1
-            change_x = -1
+            change_x = -1.25
         if (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and player.x < SCREEN_WIDTH-5:
-            player.x += 1
-            change_x = 1
+            change_x = 1.25
         if (keys[pygame.K_UP] or keys[pygame.K_w]) and player.y > 5:
-            player.y -= 1
-            change_y = -1
+            change_y = -1.25
         if (keys[pygame.K_DOWN] or keys[pygame.K_s]) and player.y < SCREEN_HEIGHT-5:
-            player.y += 1
-            change_y = 1
+            change_y = 1.25
         if not (keys[pygame.K_DOWN] or keys[pygame.K_UP] or keys[pygame.K_s] or keys[pygame.K_w]):
             change_y = 0
         if not (keys[pygame.K_LEFT] or keys[pygame.K_RIGHT] or keys[pygame.K_d] or keys[pygame.K_a]):
             change_x = 0
-
+        if change_x != 0 and change_y != 0:
+            change_x *= 0.71
+            change_y *= 0.71
+        player.x += change_x
+        player.y += change_y
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
