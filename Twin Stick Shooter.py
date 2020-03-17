@@ -406,6 +406,8 @@ def play_game():
                 bullet = Bullet((vx, vy), player.x, player.y, speed, damage)
                 bullet_list.append(bullet)
 
+        change_x = 0
+        change_y = 0
         keys = pygame.key.get_pressed()
         if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and player.x > 5:
             change_x = -1.25
