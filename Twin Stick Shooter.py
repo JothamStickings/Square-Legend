@@ -93,7 +93,7 @@ class Player:
 
     def hit(self, screen, damage=1):
         self.hp -= damage
-        pygame.draw.rect(screen, (255, 255, 255), (self.y - 5, self.x - 5, 10, 10))
+        pygame.draw.rect(screen, (255, 255, 255), (int(self.y - 5), int(self.x - 5), 10, 10))
         if self.hp <= 0:
             return True
         return False
@@ -315,7 +315,7 @@ def check_on_screen(bullet, bullet_list):
 
 def teleport_player(tel, player, screen, change_x, change_y, charges):
     tel.play()
-    pygame.draw.rect(screen, red, (player.x - 6, player.y - 6, 12, 12))
+    pygame.draw.rect(screen, red, (int(player.x - 6), int(player.y - 6), 12, 12))
     player.x += change_x*50
     player.y += change_y*50
     if player.y > SCREEN_HEIGHT-5:
@@ -326,7 +326,7 @@ def teleport_player(tel, player, screen, change_x, change_y, charges):
         player.x = SCREEN_WIDTH-5
     if player.x < 5:
         player.x = 5
-    pygame.draw.rect(screen, red, (player.x - 7, player.y - 7, 14, 14))
+    pygame.draw.rect(screen, red, (int(player.x - 7), int(player.y - 7), 14, 14))
     return charges-1
 
 
@@ -403,7 +403,7 @@ def play_game():
                 pos = pygame.mouse.get_pos()
                 vx = pos[0] - player.x
                 vy = pos[1] - player.y
-                bullet = Bullet((vx, vy), player.x, player.y, speed, damage)
+                bullet = Bullet((vx, vy), int(player.x), int(player.y), speed, damage)
                 bullet_list.append(bullet)
 
         change_x = 0
@@ -440,7 +440,7 @@ def play_game():
                 pos = pygame.mouse.get_pos()
                 vx = pos[0] - player.x
                 vy = pos[1] - player.y
-                new_grenade = Grenade((vx, vy), player.x, player.y)
+                new_grenade = Grenade((vx, vy), int(player.x), player.y)
                 grenade_list.append(new_grenade)
 
         if randint(0, 5000) <= 20 + score / 100 and len(enemy_list) <= 5 + score / 10:
@@ -468,7 +468,7 @@ def play_game():
             enemy = Enemy("breeder2", SCREEN_WIDTH//2+randint(-40, 40), randint(25, 75))
             enemy_list.append(enemy)
 
-        pygame.draw.rect(screen, black, (player.x - 5, player.y - 5, 10, 10))
+        pygame.draw.rect(screen, black, (int(player.x - 5), int(player.y - 5), 10, 10))
 
         for i in range(player.hp):
             pygame.draw.rect(screen, black, (0, i * 10, 10, 5))
@@ -490,14 +490,14 @@ def play_game():
 
         for item in item_list:
             if item.type == 0:
-                pygame.draw.rect(screen, green, (item.x - 3, item.y - 1, 6, 2))
-                pygame.draw.rect(screen, green, (item.x - 1, item.y - 3, 2, 6))
+                pygame.draw.rect(screen, green, (int(item.x - 3), int(item.y - 1), 6, 2))
+                pygame.draw.rect(screen, green, (int(item.x - 1), int(item.y - 3), 2, 6))
             elif item.type == 1:
-                pygame.draw.rect(screen, red, (item.x - 3, item.y - 1, 6, 2))
-                pygame.draw.rect(screen, red, (item.x - 1, item.y - 3, 2, 6))
+                pygame.draw.rect(screen, red, (int(item.x - 3), int(item.y - 1), 6, 2))
+                pygame.draw.rect(screen, red, (int(item.x - 1), int(item.y - 3), 2, 6))
             elif item.type == 2:
-                pygame.draw.rect(screen, blue, (item.x - 3, item.y - 1, 6, 2))
-                pygame.draw.rect(screen, blue, (item.x - 1, item.y - 3, 2, 6))
+                pygame.draw.rect(screen, blue, (int(item.x - 3), int(item.y - 1), 6, 2))
+                pygame.draw.rect(screen, blue, (int(item.x - 1), int(item.y - 3), 2, 6))
             if touching(player, item, 7, 7):
                 if item.type == 0:
                     pickup.play()
@@ -513,7 +513,7 @@ def play_game():
                     if item_choice == 1:
                         damage += 0.5
                     if item_choice == 2:
-                        f = Enemy("friend", player.x + 2, player.y + 4)
+                        f = Enemy("friend", int(player.x + 2), player.y + 4)
                         enemy_list.append(f)
                 elif item.type == 2:
                     power.play()
@@ -523,108 +523,108 @@ def play_game():
 
         for enemy in enemy_list:
             if not enemy.type:
-                pygame.draw.rect(screen, black, (enemy.x - 5, enemy.y - 5, 10, 10))
+                pygame.draw.rect(screen, black, (int(enemy.x - 5), int(enemy.y - 5), 10, 10))
                 enemy.move(player, count)
                 if touching(enemy, player, 5, 5):
                     done = player.hit(screen)
                     dead, enemy_list = enemy.hit(enemy_list, 1)
             elif enemy.type == "shooter":
-                pygame.draw.rect(screen, black, (enemy.x - 3, enemy.y - 3, 6, 6))
+                pygame.draw.rect(screen, black, (int(enemy.x - 3), int(enemy.y - 3), 6, 6))
                 enemy.move(player)
                 if randint(0, 120) <= 2:
                     vx = player.x - enemy.x
                     vy = player.y - enemy.y
-                    bullet = Bullet((vx, vy), enemy.x, enemy.y)
+                    bullet = Bullet((vx, vy), int(enemy.x), enemy.y)
                     enemy_bullet_list.append(bullet)
             elif enemy.type == "sniper":
-                pygame.draw.rect(screen, black, (enemy.x - 3, enemy.y - 3, 6, 6))
-                pygame.draw.rect(screen, black, (enemy.x - 5, enemy.y - 1, 10, 2))
-                pygame.draw.rect(screen, black, (enemy.x - 1, enemy.y - 5, 2, 10))
+                pygame.draw.rect(screen, black, (int(enemy.x - 3), int(enemy.y - 3), 6, 6))
+                pygame.draw.rect(screen, black, (int(enemy.x - 5), int(enemy.y - 1), 10, 2))
+                pygame.draw.rect(screen, black, (int(enemy.x - 1), int(enemy.y - 5), 2, 10))
                 enemy.move(player)
                 if randint(0, 500) <= 1:
                     vx = player.x - enemy.x
                     vy = player.y - enemy.y
-                    bullet = Bullet((vx, vy), enemy.x, enemy.y, 8, 2)
+                    bullet = Bullet((vx, vy), int(enemy.x), int(enemy.y), 8, 2)
                     enemy_bullet_list.append(bullet)
             elif enemy.type == "warper":
                 enemy.move(player)
-                pygame.draw.rect(screen, black, (enemy.x - 5, enemy.y - 5, 10, 10))
-                pygame.draw.rect(screen, white, (enemy.x - 3, enemy.y - 3, 6, 6))
+                pygame.draw.rect(screen, black, (int(enemy.x - 5), int(enemy.y - 5), 10, 10))
+                pygame.draw.rect(screen, white, (int(enemy.x - 3), int(enemy.y - 3), 6, 6))
                 dy = player.y - enemy.y
                 dx = player.x - enemy.x
                 distance = math.sqrt(dx ** 2 + dy ** 2)
                 if randint(0, 375) <= 1 and distance > 25:
                     tel_enemy.play()
-                    pygame.draw.rect(screen, red, (enemy.x - 5, enemy.y - 5, 10, 10))
+                    pygame.draw.rect(screen, red, (int(enemy.x - 5), int(enemy.y - 5), 10, 10))
                     enemy.x += dx * 1.4
                     enemy.y += dy * 1.4
-                    pygame.draw.rect(screen, red, (enemy.x - 5, enemy.y - 5, 10, 10))
+                    pygame.draw.rect(screen, red, (int(enemy.x - 5), int(enemy.y - 5), 10, 10))
                 if touching(enemy, player, 5, 5):
                     done = player.hit(screen)
                     dead, enemy_list = enemy.hit(enemy_list, 1)
             elif enemy.type == "warrior":
                 enemy.move(player, count)
-                pygame.draw.rect(screen, black, (enemy.x - 4, enemy.y - 4, 9, 9))
-                pygame.draw.rect(screen, white, (enemy.x - 2, enemy.y - 3, 5, 7))
-                pygame.draw.rect(screen, white, (enemy.x - 3, enemy.y - 2, 7, 5))
-                pygame.draw.rect(screen, black, (enemy.x, enemy.y - 3, 1, 7))
-                pygame.draw.rect(screen, black, (enemy.x - 3, enemy.y, 7, 1))
+                pygame.draw.rect(screen, black, (int(enemy.x - 4), int(enemy.y - 4), 9, 9))
+                pygame.draw.rect(screen, white, (int(enemy.x - 2), int(enemy.y - 3), 5, 7))
+                pygame.draw.rect(screen, white, (int(enemy.x - 3), int(enemy.y - 2), 7, 5))
+                pygame.draw.rect(screen, black, (int(enemy.x), int(enemy.y - 3), 1, 7))
+                pygame.draw.rect(screen, black, (int(enemy.x - 3), int(enemy.y), 7, 1))
                 if randint(0, 240) <= 2:
                     vx = player.x - enemy.x
                     vy = player.y - enemy.y
-                    bullet = Bullet((vx, vy), enemy.x, enemy.y)
+                    bullet = Bullet((vx, vy), int(enemy.x), enemy.y)
                     enemy_bullet_list.append(bullet)
                 if touching(enemy, player, 7, 7):
                     done = player.hit(screen)
                     dead, enemy_list = enemy.hit(enemy_list, 1)
             elif enemy.type == "friend":
                 enemy.move(player)
-                pygame.draw.rect(screen, black, (enemy.x - 5, enemy.y - 2, 10, 4))
-                pygame.draw.rect(screen, black, (enemy.x - 2, enemy.y - 5, 4, 10))
+                pygame.draw.rect(screen, black, (int(enemy.x - 5), int(enemy.y - 2), 10, 4))
+                pygame.draw.rect(screen, black, (int(enemy.x - 2), int(enemy.y - 5), 4, 10))
                 for e in enemy_list:
                     if e.type != "friend":
                         if randint(0, 500) <= 1:
                             vx = e.x - enemy.x
                             vy = e.y - enemy.y
-                            bullet = Bullet((vx, vy), enemy.x, enemy.y)
+                            bullet = Bullet((vx, vy), int(enemy.x), enemy.y)
                             bullet_list.append(bullet)
             elif enemy.type == "breeder":
-                pygame.draw.rect(screen, black, (enemy.x - 15, enemy.y - 15, 30, 30))
-                pygame.draw.rect(screen, black, (enemy.x - 20, enemy.y - 5, 40, 10))
-                pygame.draw.rect(screen, black, (enemy.x - 5, enemy.y - 20, 10, 40))
+                pygame.draw.rect(screen, black, (int(enemy.x - 15), int(enemy.y - 15), 30, 30))
+                pygame.draw.rect(screen, black, (int(enemy.x - 20), int(enemy.y - 5), 40, 10))
+                pygame.draw.rect(screen, black, (int(enemy.x - 5), int(enemy.y - 20), 10, 40))
                 enemy.move(player)
                 if randint(0, 500) <= 3 and len(enemy_list) <= 5 + score / 10:
-                    temp = Enemy(None, enemy.x, enemy.y)
+                    temp = Enemy(None, int(enemy.x), enemy.y)
                     enemy_list.append(temp)
             elif enemy.type == "breeder2":
-                pygame.draw.rect(screen, black, (enemy.x - 15, enemy.y - 15, 30, 30))
-                pygame.draw.rect(screen, black, (enemy.x - 20, enemy.y - 5, 40, 10))
-                pygame.draw.rect(screen, black, (enemy.x - 5, enemy.y - 20, 10, 40))
-                pygame.draw.rect(screen, white, (enemy.x - 3, enemy.y - 10, 6, 20))
-                pygame.draw.rect(screen, white, (enemy.x - 10, enemy.y - 3, 20, 5))
+                pygame.draw.rect(screen, black, (int(enemy.x - 15), int(enemy.y - 15), 30, 30))
+                pygame.draw.rect(screen, black, (int(enemy.x - 20), int(enemy.y - 5), 40, 10))
+                pygame.draw.rect(screen, black, (int(enemy.x - 5), int(enemy.y - 20), 10, 40))
+                pygame.draw.rect(screen, white, (int(enemy.x - 3), int(enemy.y - 10), 6, 20))
+                pygame.draw.rect(screen, white, (int(enemy.x - 10), int(enemy.y - 3), 20, 5))
                 enemy.move(player)
                 if randint(0, 500) <= 3 and len(enemy_list) <= 5 + score / 10:
                     if randint(0, 1) == 0:
-                        temp = Enemy("shooter", enemy.x, enemy.y)
+                        temp = Enemy("shooter", int(enemy.x), enemy.y)
                         enemy_list.append(temp)
                     else:
-                        temp = Enemy("sniper", enemy.x, enemy.y)
+                        temp = Enemy("sniper", int(enemy.x), enemy.y)
                         enemy_list.append(temp)
                 if randint(0, 200) <= 3:
-                    b = Bullet((1, 0), enemy.x, enemy.y)
+                    b = Bullet((1, 0), int(enemy.x), enemy.y)
                     enemy_bullet_list.append(b)
-                    b = Bullet((0, 1), enemy.x, enemy.y)
+                    b = Bullet((0, 1), int(enemy.x), enemy.y)
                     enemy_bullet_list.append(b)
-                    b = Bullet((-1, 0), enemy.x, enemy.y)
+                    b = Bullet((-1, 0), int(enemy.x), enemy.y)
                     enemy_bullet_list.append(b)
-                    b = Bullet((0, -1), enemy.x, enemy.y)
+                    b = Bullet((0, -1), int(enemy.x), enemy.y)
                     enemy_bullet_list.append(b)
             elif enemy.type == "superSniper":
-                pygame.draw.rect(screen, black, (enemy.x - 3, enemy.y - 3, 6, 6))
-                pygame.draw.rect(screen, black, (enemy.x - 7, enemy.y - 1, 14, 2))
-                pygame.draw.rect(screen, black, (enemy.x - 1, enemy.y - 7, 2, 14))
-                pygame.draw.rect(screen, white, (enemy.x - 2, enemy.y - 1, 4, 2))
-                pygame.draw.rect(screen, white, (enemy.x - 1, enemy.y - 2, 2, 4))
+                pygame.draw.rect(screen, black, (int(enemy.x - 3), int(enemy.y - 3), 6, 6))
+                pygame.draw.rect(screen, black, (int(enemy.x - 7), int(enemy.y - 1), 14, 2))
+                pygame.draw.rect(screen, black, (int(enemy.x - 1), int(enemy.y - 7), 2, 14))
+                pygame.draw.rect(screen, white, (int(enemy.x - 2), int(enemy.y - 1), 4, 2))
+                pygame.draw.rect(screen, white, (int(enemy.x - 1), int(enemy.y - 2), 2, 4))
                 enemy.move(player)
                 if randint(0, 500) <= 1:
                     vx = player.x - enemy.x
@@ -632,11 +632,11 @@ def play_game():
                     distance = math.sqrt(vx ** 2 + vy ** 2)
                     vx += change_x * (distance / 8)
                     vy += change_y * (distance / 8)
-                    bullet = Bullet((vx, vy), enemy.x, enemy.y, 8, 2)
+                    bullet = Bullet((vx, vy), int(enemy.x), int(enemy.y), 8, 2)
                     enemy_bullet_list.append(bullet)
 
         for bullet in bullet_list:
-            pygame.draw.rect(screen, black, (bullet.x - 1, bullet.y - 1, 2, 2))
+            pygame.draw.rect(screen, black, (int(bullet.x - 1), int(bullet.y - 1), 2, 2))
             bullet.move()
             for enemy in enemy_list:
                 if enemy.type == "breeder" or enemy.type == "breeder2":
@@ -649,27 +649,27 @@ def play_game():
                     if dead:
                         score += 1
                         if randint(0, 15) == 9:
-                            item = Item(enemy.x, enemy.y, 0)
+                            item = Item(int(enemy.x), int(enemy.y), 0)
                             item_list.append(item)
                         if randint(1, 15) == 1 and enemy.type == "sniper":
-                            item = Item(enemy.x, enemy.y, 1)
+                            item = Item(int(enemy.x), int(enemy.y), 1)
                             item_list.append(item)
                         if randint(1, 5) == 2 and enemy.type == "warper":
-                            item = Item(enemy.x, enemy.y, 2)
+                            item = Item(int(enemy.x), int(enemy.y), 2)
                             item_list.append(item)
                         elif randint(1, 3) == 2 and (enemy.type == "breeder"
                                                      or enemy.type == "breeder2"
                                                      or enemy.type == "superSniper"):
-                            item = Item(enemy.x, enemy.y, 1)
+                            item = Item(int(enemy.x), int(enemy.y), 1)
                             item_list.append(item)
                         elif randint(1, 5) == 3 and (enemy.type == "warrior"):
-                            item = Item(enemy.x, enemy.y, 1)
+                            item = Item(int(enemy.x), int(enemy.y), 1)
                             item_list.append(item)
                         charges = max_charges
             bullet_list = check_on_screen(bullet, bullet_list)
 
         for bullet in enemy_bullet_list:
-            pygame.draw.rect(screen, black, (bullet.x - 1, bullet.y - 1, 2, 2))
+            pygame.draw.rect(screen, black, (int(bullet.x - 1), int(bullet.y - 1), 2, 2))
             bullet.move()
             if touching(bullet, player, 5, 5):
                 enemy_bullet_list = bullet.delete(enemy_bullet_list)
@@ -677,17 +677,17 @@ def play_game():
             enemy_bullet_list = check_on_screen(bullet, enemy_bullet_list)
 
         for grenade in grenade_list:
-            pygame.draw.rect(screen, black, (grenade.x - 2, grenade.y - 2, 4, 4))
+            pygame.draw.rect(screen, black, (int(grenade.x - 2), int(grenade.y - 2), 4, 4))
             if grenade.get_life() < 90 and 520 % grenade.get_life() == 0:
-                pygame.draw.rect(screen, white, (grenade.x - 2, grenade.y - 2, 4, 4))
+                pygame.draw.rect(screen, white, (int(grenade.x - 2), int(grenade.y - 2), 4, 4))
             life = grenade.move()
             grenade_list = check_on_screen(grenade, grenade_list)
             if life == 10:
                 exp.play()
             if life <= 3:
-                pygame.draw.rect(screen, black, (grenade.x - 15, grenade.y - 15, 30, 30))
+                pygame.draw.rect(screen, black, (int(grenade.x - 15), int(grenade.y - 15), 30, 30))
             if life == 0:
-                pygame.draw.rect(screen, black, (grenade.x - 25, grenade.y - 25, 50, 50))
+                pygame.draw.rect(screen, black, (int(grenade.x - 25), int(grenade.y - 25), 50, 50))
                 for enemy in enemy_list:
                     if touching(enemy, grenade, 20, 20):
                         enemy.hit(enemy_list, grenade.damage)
