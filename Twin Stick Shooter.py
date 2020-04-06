@@ -7,8 +7,8 @@ from HighScore import *
 
 highscores = HighScoreTable("SquareLegendHighscores.db")
 try:
-    highscores.CreateTable()
-except:
+    highscores.create_table()
+except TableAlreadyExistsError:
     pass
 
 
@@ -711,7 +711,7 @@ def play_game():
 
     name = get_name(score)
     if name != "":
-        highscores.EnterScore(name, score)
+        highscores.enter_score(name, score)
 
 
 if __name__ == "__main__":
@@ -748,7 +748,7 @@ if __name__ == "__main__":
         elif 340 <= y <= 360 and 183 <= x <= 218:
             break
         elif 390 <= y <= 410 and 160 <= x <= 240:
-            highscores.DisplayTable()
+            highscores.display_table()
         elif 440 <= y <= 460 and 165 <= x <= 235:
             display_instructions()
 
