@@ -107,10 +107,10 @@ class Enemy:
         if not self.type:
             self.hp = 3
             self.speed = 1.5
-        elif self.type == "shooter" or self.type == "sniper" or self.type == "friend" or self.type == "superSniper":
+        elif self.type == "shooter" or self.type == "sniper" or self.type == "superSniper":
             self.hp = 2
             self.speed = 0.5
-        elif self.type == "breeder" or self.type == "breeder2":
+        elif self.type == "breeder":
             self.hp = 15
             self.speed = 0.4
         elif self.type == "warper":
@@ -119,6 +119,9 @@ class Enemy:
         elif self.type == "warrior":
             self.speed = 2.2
             self.hp = 5
+        elif self.type == "breeder2" or self.type == "friend":
+            self.hp = 25
+            self.speed = 0.5
 
     def hit(self, enemy_list, damage):
         self.hp -= damage
