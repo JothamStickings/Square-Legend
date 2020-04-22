@@ -2,14 +2,11 @@
 
 import pygame
 from random import *
-import math
-from HighScore import *
-
-highscores = HighScoreTable("SquareLegendHighscores.db")
-try:
-    highscores.create_table()
-except TableAlreadyExistsError:
-    pass
+from Enemy import Enemy
+from Projectiles import *
+from Player import Player
+from Item import Item
+from graphics import *
 
 
 def display_instructions():
@@ -73,7 +70,7 @@ def get_name(score):
 
 # initialise pygame
 pygame.init()
-pygame.mixer.pre_init(44100, 16, 2, 4096) #frequency, size, channels, buffersize
+pygame.mixer.pre_init(44100, 16, 2, 4096) # frequency, size, channels, buffersize
 
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 600
@@ -83,224 +80,6 @@ white = (255, 255, 255)
 red = (255, 0, 0)
 green = (0, 255, 0)
 blue = (0, 0, 255)
-
-
-class Player:
-    def __init__(self):
-        self.x = 250
-        self.y = 250
-        self.hp = 5
-
-    def hit(self, screen, damage=1):
-        self.hp -= damage
-        pygame.draw.rect(screen, (255, 255, 255), (int(self.y - 5), int(self.x - 5), 10, 10))
-        if self.hp <= 0:
-            return True
-        return False
-
-
-class Enemy:
-    def __init__(self, type=None, x=500, y=50):
-        self.x = x
-        self.y = y
-        self.type = type
-        if not self.type:
-            self.hp = 3
-            self.speed = 1.5
-        elif self.type == "shooter" or self.type == "sniper" or self.type == "superSniper":
-            self.hp = 2
-            self.speed = 0.5
-        elif self.type == "breeder":
-            self.hp = 15
-            self.speed = 0.4
-        elif self.type == "warper":
-            self.speed = 1
-            self.hp = 2
-        elif self.type == "warrior":
-            self.speed = 2.2
-            self.hp = 5
-        elif self.type == "breeder2" or self.type == "friend":
-            self.hp = 25
-            self.speed = 0.5
-
-    def hit(self, enemy_list, damage):
-        self.hp -= damage
-        if self.hp <= 0:
-            try:
-                enemy_list.remove(self)
-            finally:
-                del self
-                return True, enemy_list
-        return False, enemy_list
-
-    def move(self, player, count=0):
-        if self.type == "friend":
-            dx = player.x - self.x
-            dy = player.y - self.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-            m = self.speed / distance
-            if distance <= 50 and 0 < self.y < 600 and 1000 > self.x > 0:
-                self.x -= dx * m
-                self.y -= dy * m
-            else:
-                self.x += dx * m
-                self.y += dy * m
-        if self.type is None or self.type == "warper":
-            dx = player.x - self.x
-            dy = player.y - self.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-            m = self.speed / distance
-            self.x += dx * m
-            self.y += dy * m
-        elif self.type == "warrior":
-            dx = player.x - self.x
-            dy = player.y - self.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-            m = self.speed / distance
-            self.x += dx * m * (2 / 3)
-            self.y += dy * m * (2 / 3)
-            if count % 120 <= 60:
-                self.x -= dy * m / 3
-                self.y += dx * m / 3
-            else:
-                self.x += dy * m / 2
-                self.y -= dx * m / 2
-        elif self.type == "shooter":
-            dx = player.x - self.x
-            dy = player.y - self.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-            m = self.speed / distance
-            if distance <= 200:
-                if SCREEN_WIDTH-5 > self.x > 5:
-                    self.x -= dx * m
-                if 5 < self.y < SCREEN_HEIGHT-5:
-                    self.y -= dy * m
-            else:
-                self.x += dx * m
-                self.y += dy * m
-        elif self.type == "sniper":
-            dx = player.x - self.x
-            dy = player.y - self.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-            m = self.speed / distance
-            if distance <= 400:
-                if SCREEN_WIDTH-5 > self.x > 5:
-                    self.x -= dx * m
-                if 5 < self.y < SCREEN_HEIGHT-5:
-                    self.y -= dy * m
-            else:
-                self.x += dx * m
-                self.y += dy * m
-        elif self.type == "breeder":
-            dx = player.x - self.x
-            dy = player.y - self.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-            m = self.speed / distance
-            if distance <= 100 and 5 < self.y < SCREEN_HEIGHT-5 and SCREEN_WIDTH-5 > self.x > 5:
-                self.x -= dx * m
-                self.y -= dy * m
-            else:
-                self.x += dx * m
-                self.y += dy * m
-        elif self.type == "breeder2":
-            dx = player.x - self.x
-            dy = player.y - self.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-            m = self.speed / distance
-            if distance <= 250:
-                if SCREEN_WIDTH-5 > self.x > 5:
-                    self.x -= dx * m
-                if 5 < self.y < SCREEN_HEIGHT-5:
-                    self.y -= dy * m
-            else:
-                self.x += dx * m
-                self.y += dy * m
-        elif self.type == "superSniper":
-            dx = player.x - self.x
-            dy = player.y - self.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-            m = self.speed / distance
-            if distance <= 450:
-                if SCREEN_WIDTH-5 > self.x > 5:
-                    self.x -= dx * m
-                if 5 < self.y < SCREEN_HEIGHT-5:
-                    self.y -= dy * m
-            else:
-                self.x += dx * m
-                self.y += dy * m
-
-
-class Bullet:
-    def __init__(self, vector, x, y, speed=4, damage=1):
-        self.vector = vector
-        self.x = x
-        self.y = y
-        self.speed = speed
-        self.damage = damage
-
-    def move(self):
-        vector = self.vector
-        distance = math.sqrt(vector[0] ** 2 + vector[1] ** 2)
-        multiplier = self.speed / distance
-        self.x += vector[0] * multiplier
-        self.y += vector[1] * multiplier
-
-    def delete(self, bullet_list):
-        try:
-            bullet_list.remove(self)
-            return bullet_list
-        except ValueError:
-            return bullet_list
-        finally:
-            del self
-
-
-class Grenade:
-    def __init__(self, vector, px, py, life=100):
-        self.vector = vector
-        self.x = px
-        self.y = py
-        self.life = life
-        self.speed = 4
-        self.damage = 4
-
-    def move(self):
-        vector = self.vector
-        distance = math.sqrt(vector[0] ** 2 + vector[1] ** 2)
-        multiplier = self.speed / distance
-        self.speed *= 0.94
-        self.life -= 1
-        self.x += vector[0] * multiplier
-        self.y += vector[1] * multiplier
-        return self.life
-
-    def get_life(self):
-        return self.life
-
-    def delete(self, grenade_list):
-        try:
-            grenade_list.remove(self)
-            return grenade_list
-        except ValueError:
-            return grenade_list
-        finally:
-            del self
-
-
-class Item:
-    def __init__(self, x, y, t):
-        self.type = t
-        self.x = x
-        self.y = y
-
-    def delete(self, l):
-        try:
-            l.remove(self)
-            return l
-        except ValueError:
-            return l
-        finally:
-            del self
 
 
 def touching(bullet, thing, width, height):
@@ -333,7 +112,7 @@ def teleport_player(tel, player, screen, change_x, change_y, charges):
     return charges-1
 
 
-def play_game():
+def play_game(highscores):
     # useful definitions
     SCREEN_WIDTH = 1000
     SCREEN_HEIGHT = 600
@@ -377,8 +156,6 @@ def play_game():
     count = 0
     default_reload_speed = 1.5
     reload = default_reload_speed
-    change_x = 0
-    change_y = 0
     max_charges = 1
     charges = max_charges
     grenade_reload = 5
@@ -715,44 +492,3 @@ def play_game():
     name = get_name(score)
     if name != "":
         highscores.enter_score(name, score)
-
-
-if __name__ == "__main__":
-    menu = GraphWin("Menu", 400, 500)
-    menu.setBackground("white")
-    title = Text(Point(200, 100), "Square\nLegend")
-    title.setFill("black")
-    title.setSize(30)
-    title.draw(menu)
-    play = Text(Point(200, 300), "Play")
-    play.setFill("black")
-    play.draw(menu)
-    close = Text(Point(200, 350), "Close")
-    close.setFill("black")
-    close.draw(menu)
-    hs = Text(Point(200, 400), "High Scores")
-    hs.setFill("black")
-    inst = Text(Point(200, 450), "Controls")
-    inst.setFill("black")
-    inst.draw(menu)
-    hs.draw(menu)
-
-    while True:
-        try:
-            click = menu.getMouse()
-        except GraphicsError:
-            menu.close()
-            break
-        y = click.getY()
-        x = click.getX()
-
-        if 290 <= y <= 310 and 183 <= x <= 218:
-            play_game()
-        elif 340 <= y <= 360 and 183 <= x <= 218:
-            break
-        elif 390 <= y <= 410 and 160 <= x <= 240:
-            highscores.display_table()
-        elif 440 <= y <= 460 and 165 <= x <= 235:
-            display_instructions()
-
-    menu.close()
