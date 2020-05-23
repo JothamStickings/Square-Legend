@@ -38,30 +38,29 @@ class Enemy:
                 return True, enemy_list
         return False, enemy_list
 
+    def get_vector(self, p):
+        dx = p.x - self.x
+        dy = p.y - self.y
+        distance = math.sqrt(dx ** 2 + dy ** 2)
+        m = self.speed / distance
+        return dx, dy, distance, m
+
     def move(self, player, count=0):
+        dx, dy, distance, m = self.get_vector(player)
+
         if self.type == "friend":
-            dx = player.x - self.x
-            dy = player.y - self.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-            m = self.speed / distance
             if distance <= 50 and 0 < self.y < 600 and 1000 > self.x > 0:
                 self.x -= dx * m
                 self.y -= dy * m
             else:
                 self.x += dx * m
                 self.y += dy * m
-        if self.type is None or self.type == "warper":
-            dx = player.x - self.x
-            dy = player.y - self.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-            m = self.speed / distance
+
+        elif self.type is None or self.type == "warper":
             self.x += dx * m
             self.y += dy * m
+
         elif self.type == "warrior":
-            dx = player.x - self.x
-            dy = player.y - self.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-            m = self.speed / distance
             self.x += dx * m * (2 / 3)
             self.y += dy * m * (2 / 3)
             if count % 120 <= 60:
@@ -70,11 +69,8 @@ class Enemy:
             else:
                 self.x += dy * m / 2
                 self.y -= dx * m / 2
+
         elif self.type == "shooter":
-            dx = player.x - self.x
-            dy = player.y - self.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-            m = self.speed / distance
             if distance <= 200:
                 if SCREEN_WIDTH-5 > self.x > 5:
                     self.x -= dx * m
@@ -83,11 +79,8 @@ class Enemy:
             else:
                 self.x += dx * m
                 self.y += dy * m
+
         elif self.type == "sniper":
-            dx = player.x - self.x
-            dy = player.y - self.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-            m = self.speed / distance
             if distance <= 400:
                 if SCREEN_WIDTH-5 > self.x > 5:
                     self.x -= dx * m
@@ -96,22 +89,16 @@ class Enemy:
             else:
                 self.x += dx * m
                 self.y += dy * m
+
         elif self.type == "breeder":
-            dx = player.x - self.x
-            dy = player.y - self.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-            m = self.speed / distance
             if distance <= 100 and 5 < self.y < SCREEN_HEIGHT-5 and SCREEN_WIDTH-5 > self.x > 5:
                 self.x -= dx * m
                 self.y -= dy * m
             else:
                 self.x += dx * m
                 self.y += dy * m
+
         elif self.type == "breeder2":
-            dx = player.x - self.x
-            dy = player.y - self.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-            m = self.speed / distance
             if distance <= 250:
                 if SCREEN_WIDTH-5 > self.x > 5:
                     self.x -= dx * m
@@ -120,11 +107,8 @@ class Enemy:
             else:
                 self.x += dx * m
                 self.y += dy * m
+
         elif self.type == "superSniper":
-            dx = player.x - self.x
-            dy = player.y - self.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-            m = self.speed / distance
             if distance <= 450:
                 if SCREEN_WIDTH-5 > self.x > 5:
                     self.x -= dx * m

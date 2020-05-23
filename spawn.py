@@ -19,5 +19,7 @@ class Spawn:
     def __del__(self, spawn_list=None):
         if spawn_list is None:
             spawn_list = [self]
-        spawn_list.remove(self)
-        del self
+        try:
+            spawn_list.remove(self)
+        finally:
+            del self
