@@ -45,20 +45,27 @@ class Enemy:
         m = self.speed / distance
         return dx, dy, distance, m
 
+    def approach(self, dx, dy, m):
+        self.x += dx * m
+        self.y += dy * m
+
+    def recede(self, dx, dy, m):
+        if SCREEN_WIDTH-5 > self.x > 5:
+            self.x -= dx * m
+        if 5 < self.y < SCREEN_HEIGHT-5:
+            self.y -= dy * m
+
     def move(self, player, count=0):
         dx, dy, distance, m = self.get_vector(player)
 
         if self.type == "friend":
             if distance <= 50 and 0 < self.y < 600 and 1000 > self.x > 0:
-                self.x -= dx * m
-                self.y -= dy * m
+                self.recede(dx, dy, m)
             else:
-                self.x += dx * m
-                self.y += dy * m
+                self.approach(dx, dy, m)
 
         elif self.type is None or self.type == "warper":
-            self.x += dx * m
-            self.y += dy * m
+            self.approach(dx, dy, m)
 
         elif self.type == "warrior":
             self.x += dx * m * (2 / 3)
@@ -72,48 +79,30 @@ class Enemy:
 
         elif self.type == "shooter":
             if distance <= 200:
-                if SCREEN_WIDTH-5 > self.x > 5:
-                    self.x -= dx * m
-                if 5 < self.y < SCREEN_HEIGHT-5:
-                    self.y -= dy * m
+                self.recede(dx, dy, m)
             else:
-                self.x += dx * m
-                self.y += dy * m
+                self.approach(dx, dy, m)
 
         elif self.type == "sniper":
             if distance <= 400:
-                if SCREEN_WIDTH-5 > self.x > 5:
-                    self.x -= dx * m
-                if 5 < self.y < SCREEN_HEIGHT-5:
-                    self.y -= dy * m
+                self.recede(dx, dy, m)
             else:
-                self.x += dx * m
-                self.y += dy * m
+                self.approach(dx, dy, m)
 
         elif self.type == "breeder":
-            if distance <= 100 and 5 < self.y < SCREEN_HEIGHT-5 and SCREEN_WIDTH-5 > self.x > 5:
-                self.x -= dx * m
-                self.y -= dy * m
+            if distance <= 100:
+                self.recede(dx, dy, m)
             else:
-                self.x += dx * m
-                self.y += dy * m
+                self.approach(dx, dy, m)
 
         elif self.type == "breeder2":
             if distance <= 250:
-                if SCREEN_WIDTH-5 > self.x > 5:
-                    self.x -= dx * m
-                if 5 < self.y < SCREEN_HEIGHT-5:
-                    self.y -= dy * m
+                self.recede(dx, dy, m)
             else:
-                self.x += dx * m
-                self.y += dy * m
+                self.approach(dx, dy, m)
 
         elif self.type == "superSniper":
             if distance <= 450:
-                if SCREEN_WIDTH-5 > self.x > 5:
-                    self.x -= dx * m
-                if 5 < self.y < SCREEN_HEIGHT-5:
-                    self.y -= dy * m
+                self.recede(dx, dy, m)
             else:
-                self.x += dx * m
-                self.y += dy * m
+                self.approach(dx, dy, m)
