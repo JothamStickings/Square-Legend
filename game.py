@@ -91,18 +91,18 @@ def check_on_screen(bullet, bullet_list):
 def teleport_player(tel, player, screen, change_x, change_y, charges):
     tel.play()
     pygame.draw.rect(screen, RED, (int(player.x - 6), int(player.y - 6), 12, 12))
-    player.x += change_x*50
-    player.y += change_y*50
-    if player.y > SCREEN_HEIGHT-5:
-        player.y = SCREEN_HEIGHT-5
+    player.x += change_x * 50
+    player.y += change_y * 50
+    if player.y > SCREEN_HEIGHT - 5:
+        player.y = SCREEN_HEIGHT - 5
     if player.y < 5:
         player.y = 5
-    if player.x > SCREEN_WIDTH-5:
-        player.x = SCREEN_WIDTH-5
+    if player.x > SCREEN_WIDTH - 5:
+        player.x = SCREEN_WIDTH - 5
     if player.x < 5:
         player.x = 5
     pygame.draw.rect(screen, RED, (int(player.x - 7), int(player.y - 7), 14, 14))
-    return charges-1
+    return charges - 1
 
 
 def play_game(highscores):
@@ -166,11 +166,10 @@ def play_game(highscores):
 
     while not done:
         screen.fill(white)
-        mouse = pygame.mouse.get_pressed()
-
         played_shot = False
 
-        if mouse[0]:
+        # Fire Bullet
+        if pygame.mouse.get_pressed()[0]:
             if reload == 10:
                 shot.play()
                 played_shot = True
@@ -184,16 +183,17 @@ def play_game(highscores):
                 bullet = Bullet((vx, vy), int(player.x), int(player.y), speed, damage)
                 bullet_list.append(bullet)
 
+        # Movement
         change_x = 0
         change_y = 0
         keys = pygame.key.get_pressed()
         if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and player.x > 5:
             change_x = -1.25
-        if (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and player.x < SCREEN_WIDTH-5:
+        if (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and player.x < SCREEN_WIDTH - 5:
             change_x = 1.25
         if (keys[pygame.K_UP] or keys[pygame.K_w]) and player.y > 5:
             change_y = -1.25
-        if (keys[pygame.K_DOWN] or keys[pygame.K_s]) and player.y < SCREEN_HEIGHT-5:
+        if (keys[pygame.K_DOWN] or keys[pygame.K_s]) and player.y < SCREEN_HEIGHT - 5:
             change_y = 1.25
         if not (keys[pygame.K_DOWN] or keys[pygame.K_UP] or keys[pygame.K_s] or keys[pygame.K_w]):
             change_y = 0
@@ -204,13 +204,17 @@ def play_game(highscores):
             change_y *= 0.71
         player.x += change_x
         player.y += change_y
-        
+
+        # Special Actions
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
             if event.type == pygame.KEYDOWN:
                 k = event.key
-                if (k == pygame.K_RCTRL or k == pygame.K_SPACE or k == pygame.K_SLASH) and charges > 0:
+                if (k == pygame.K_RCTRL
+                        or k == pygame.K_SPACE
+                        or k == pygame.K_SLASH
+                        or k == pygame.K_RSHIFT) and charges > 0:
                     charges = teleport_player(tel, player, screen, change_x, change_y, charges)
                 elif k == pygame.K_i:
                     white, black = black, white
@@ -224,36 +228,39 @@ def play_game(highscores):
                 new_grenade = Grenade((vx, vy), int(player.x), player.y)
                 grenade_list.append(new_grenade)
 
+        # Enemy Spawning
         if randint(0, 5000) <= 20 + score / 100 and len(enemy_list) <= 5 + score / 10:
-            enemy = Enemy(None, SCREEN_WIDTH//2+randint(-40, 40), randint(25, 75))
+            enemy = Enemy(None, SCREEN_WIDTH // 2 + randint(-40, 40), randint(25, 75))
             enemy_list.append(enemy)
         elif randint(0, 5000) <= 10 + score / 100 and len(enemy_list) <= 5 + score / 10:
-            enemy = Enemy("shooter", SCREEN_WIDTH//2+randint(-40, 40), randint(25, 75))
+            enemy = Enemy("shooter", SCREEN_WIDTH // 2 + randint(-40, 40), randint(25, 75))
             enemy_list.append(enemy)
         elif randint(0, 5000) <= 5 + score / 100 and len(enemy_list) <= 5 + score / 10 and score >= 5:
-            enemy = Enemy("sniper", SCREEN_WIDTH//2+randint(-40, 40), randint(25, 75))
+            enemy = Enemy("sniper", SCREEN_WIDTH // 2 + randint(-40, 40), randint(25, 75))
             enemy_list.append(enemy)
         elif randint(0, 5100) <= 1 + score / 200 and len(enemy_list) <= 5 + score / 10 and score >= 25:
-            enemy = Enemy("breeder", SCREEN_WIDTH//2+randint(-40, 40), randint(25, 75))
+            enemy = Enemy("breeder", SCREEN_WIDTH // 2 + randint(-40, 40), randint(25, 75))
             enemy_list.append(enemy)
         elif randint(0, 5050) <= 4 + score / 200 and len(enemy_list) <= 5 + score / 10 and score >= 50:
-            enemy = Enemy("warper", SCREEN_WIDTH//2+randint(-40, 40), randint(25, 75))
+            enemy = Enemy("warper", SCREEN_WIDTH // 2 + randint(-40, 40), randint(25, 75))
             enemy_list.append(enemy)
         elif randint(0, 5050) <= 4 + score / 400 and len(enemy_list) <= 5 + score / 10 and score >= 100:
-            enemy = Enemy("warrior", SCREEN_WIDTH//2+randint(-40, 40), randint(25, 75))
+            enemy = Enemy("warrior", SCREEN_WIDTH // 2 + randint(-40, 40), randint(25, 75))
             enemy_list.append(enemy)
         elif randint(0, 6000) <= 3 + score / 250 and len(enemy_list) <= 5 + score / 10 and score >= 125:
-            enemy = Enemy("superSniper", SCREEN_WIDTH//2+randint(-40, 40), randint(25, 75))
+            enemy = Enemy("superSniper", SCREEN_WIDTH // 2 + randint(-40, 40), randint(25, 75))
             enemy_list.append(enemy)
         elif randint(0, 5500) <= 1 + score / 400 and len(enemy_list) <= 5 + score / 10 and score >= 150:
-            enemy = Enemy("breeder2", SCREEN_WIDTH//2+randint(-40, 40), randint(25, 75))
+            enemy = Enemy("breeder2", SCREEN_WIDTH // 2 + randint(-40, 40), randint(25, 75))
             enemy_list.append(enemy)
         elif randint(0, 4700) <= 1 + score / 400 and len(enemy_list) <= 5 + score / 10 and score >= 200:
             spawn = Spawn(randint(0, SCREEN_WIDTH), randint(0, SCREEN_HEIGHT))
             spawn_list.append(spawn)
 
+        # Draw the player
         pygame.draw.rect(screen, black, (int(player.x - 5), int(player.y - 5), 10, 10))
 
+        # Draw UI
         for i in range(player.hp):
             pygame.draw.rect(screen, black, (0, i * 10, 10, 5))
 
@@ -268,10 +275,11 @@ def play_game(highscores):
             pygame.draw.rect(screen, black, (29, i * 12 + 1, 1, 7))
             pygame.draw.rect(screen, black, (26, i * 12 + 4, 7, 1))
 
-        for i in range(1, charges+1):
-            pygame.draw.rect(screen, black, (SCREEN_WIDTH-18, i * 10, 14, 2))
-            pygame.draw.rect(screen, black, (SCREEN_WIDTH-8, i * 10 - 2, 2, 6))
+        for i in range(1, charges + 1):
+            pygame.draw.rect(screen, black, (SCREEN_WIDTH - 18, i * 10, 14, 2))
+            pygame.draw.rect(screen, black, (SCREEN_WIDTH - 8, i * 10 - 2, 2, 6))
 
+        # Item interations
         for item in item_list:
             if item.type == 0:
                 pygame.draw.rect(screen, green, (int(item.x - 3), int(item.y - 1), 6, 2))
@@ -305,6 +313,7 @@ def play_game(highscores):
                     charges = max_charges
                 item_list = item.delete(item_list)
 
+        # Enemy Interactions
         for enemy in enemy_list:
             vx, vy, _, _ = enemy.get_vector(player)
             if not enemy.type:
@@ -409,6 +418,7 @@ def play_game(highscores):
                     bullet = Bullet((vx, vy), int(enemy.x), int(enemy.y), 8, 2)
                     enemy_bullet_list.append(bullet)
 
+        # Bullet Interactions
         for bullet in bullet_list:
             pygame.draw.rect(screen, black, (int(bullet.x - 1), int(bullet.y - 1), 2, 2))
             bullet.move()
@@ -442,6 +452,7 @@ def play_game(highscores):
                         charges = max_charges
             bullet_list = check_on_screen(bullet, bullet_list)
 
+        # Enemy Bullet Interactions
         for bullet in enemy_bullet_list:
             pygame.draw.rect(screen, black, (int(bullet.x - 1), int(bullet.y - 1), 2, 2))
             bullet.move()
@@ -450,6 +461,7 @@ def play_game(highscores):
                 done = player.hit(screen, bullet.damage)
             enemy_bullet_list = check_on_screen(bullet, enemy_bullet_list)
 
+        # Grenade Interactions
         for grenade in grenade_list:
             pygame.draw.rect(screen, black, (int(grenade.x - 2), int(grenade.y - 2), 4, 4))
             if grenade.get_life() < 90 and 520 % grenade.get_life() == 0:
@@ -466,7 +478,7 @@ def play_game(highscores):
                     if touching(enemy, grenade, 20, 20):
                         enemy.hit(enemy_list, grenade.damage)
                     if touching(enemy, grenade, 30, 30):
-                        enemy.hit(enemy_list, grenade.damage-1)
+                        enemy.hit(enemy_list, grenade.damage - 1)
                 for spawn in spawn_list:
                     if touching(spawn, grenade, 20, 20):
                         spawn.__del__(spawn_list)
@@ -474,26 +486,30 @@ def play_game(highscores):
                 if touching(player, grenade, 20, 20):
                     done = player.hit(screen, grenade.damage)
                 if touching(player, grenade, 30, 30):
-                    done = player.hit(screen, grenade.damage-2)
+                    done = player.hit(screen, grenade.damage - 2)
                 grenade.delete(grenade_list)
 
+        # Spawn Interactions
         for spawn in spawn_list:
-            pygame.draw.rect(screen, black, (spawn.x-4, spawn.y-12, 8, 24))
-            pygame.draw.rect(screen, black, (spawn.x-12, spawn.y-4, 24, 8))
-            pygame.draw.rect(screen, black, (spawn.x-6, spawn.y-6, 12, 12))
+            pygame.draw.rect(screen, black, (spawn.x - 4, spawn.y - 12, 8, 24))
+            pygame.draw.rect(screen, black, (spawn.x - 12, spawn.y - 4, 24, 8))
+            pygame.draw.rect(screen, black, (spawn.x - 6, spawn.y - 6, 12, 12))
             if randint(0, 400) <= 1:
                 enemy_list.append(spawn.get_enemy())
 
         clock.tick(60)
+
+        # Update variables
         count += 1
         reload -= 0.1
         grenade_reload -= 0.1
 
         pygame.display.flip()
 
-        # quits pygame
+    # quits pygame
     pygame.quit()
 
+    # Record Score
     name = get_name(score)
     if name != "":
         highscores.enter_score(name, score)
