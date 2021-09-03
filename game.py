@@ -160,7 +160,7 @@ def play_game(highscores):
 
     pygame.mouse.set_cursor(*pygame.cursors.broken_x)
 
-    pygame.mixer.music.load('sounds/Music/music.mp3')
+    pygame.mixer.music.load('sounds/Music/music.wav')
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(0.5)
 
@@ -169,7 +169,7 @@ def play_game(highscores):
         played_shot = False
 
         # Fire Bullet
-        if pygame.mouse.get_pressed()[0]:
+        if pygame.mouse.get_pressed(3)[0]:
             if reload == 10:
                 shot.play()
                 played_shot = True
@@ -218,9 +218,9 @@ def play_game(highscores):
                     charges = teleport_player(tel, player, screen, change_x, change_y, charges)
                 elif k == pygame.K_i:
                     white, black = black, white
-            if pygame.mouse.get_pressed()[1] and event.type == pygame.MOUSEBUTTONDOWN and charges > 0:
+            if pygame.mouse.get_pressed(3)[1] and event.type == pygame.MOUSEBUTTONDOWN and charges > 0:
                 charges = teleport_player(tel, player, screen, change_x, change_y, charges)
-            if pygame.mouse.get_pressed()[2] and event.type == pygame.MOUSEBUTTONDOWN and grenade_reload <= 0:
+            if pygame.mouse.get_pressed(3)[2] and event.type == pygame.MOUSEBUTTONDOWN and grenade_reload <= 0:
                 grenade_reload = 5
                 pos = pygame.mouse.get_pos()
                 vx = pos[0] - player.x
